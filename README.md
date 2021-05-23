@@ -38,6 +38,10 @@
       - [堆排序实现](#堆排序实现)
       - [优化实现：](#优化实现)
     - [各种排序算法的性能特点](#各种排序算法的性能特点)
+    - [排序应用](#排序应用)
+- [查找](#查找)
+  - [无序链表中的顺序查找](#无序链表中的顺序查找)
+    - [定义](#定义-3)
 # 初级排序
 
 ## 插入排序
@@ -324,3 +328,87 @@ def exch(pq, i, j):
 
 ### 各种排序算法的性能特点
 ![排序算法的性能特点](/pic/排序算法的性能优点.png)
++ 快速排序是最快的通用排序算法
+  + 快速排序内循环中的指令很少，而且可以利用缓存。运行时间的增长数量级为 ``cNlgN`` 这里的c比其他线性对数级别的排序算法的都要小
+  + 在使用三向切分之后，快速排序对于实际应用中可能出现的某些分布的输入就可以变成线性级别的了，而其他的排序算法仍然需要线性对数时间
++ 所以，在大多数情况下，快速排序是最佳选择
+
+### 排序应用
++ 找出重复元素：
+  + 1. 先使用排序将数组有序化
+  + 2. 使用遍历记录连续出现的重复元素
+  + 时间复杂度：NlgN
+
+# 查找
++ 使用``符号表``这个词来描述一张抽象的表格
++ 符号表有时被称为字典，有时被叫做索引（键和值）
++ 有序符号表的一些API：
+  + ``min(), max(), floor(key)小于等于key的最大键, ceiling(key)大于等于key的最小键``
+  + ``rank(key)小于key的键的数量, select(k)排名为k的键``
+  + ``deleteMin(), deleteMax()``
+  + ``size(lo, hi)`` [lo..hi]之间键的数量
+  + ``keys(lo,hi)`` [lo..hi]之间的所有键，已排序
+
+## 无序链表中的顺序查找
+
+### 定义
++ 符号表中使用的数据结构一个简单的选择是链表，每个节点存储一个键值对。
+  + 顺序查找：在查找中我们一个个地顺序遍历符号表中的所有键并使用equals()来寻找匹配的键
++ 基础实现与简单API
+```python
+class LinkedList():
+    class Node():
+        def __init__ (self,_key,_val,next):
+            self.key = _key
+            self.value = _val
+            self.next =next
+
+    def __init__(self):
+        self.head = self.Node(None,None,None)
+        self.size = 0
+
+    def size(self):
+        return self.size
+
+    def get(self,_key):
+        node = self.head
+        while node:
+            if(node.key==_key):
+                return node.value
+            node = node.next
+        return None
+
+    def put(self,_key,_value):
+        node = self.head
+        while node:
+            if(node.key == _key):
+                node.value = _value
+                return 
+            node = node.next
+        self.head = self.Node(_key, _value,self.head)
+        self.size += 1
+
+    def delete(self,_key):
+        node = self.head
+        while node:
+            if(node.key == _key):
+                node.value = None
+                return
+
+    def keys(self):
+        node = self.head
+        all_keys = []
+        while node:
+            if node.value and node.key:
+                all_keys.append(node.key)
+            node = node.next
+        all_keys.sort()
+        return all_keys
+```
+
++ 在含有N对键值的基于无序链表的符号表中，未命中的查找和插入操作都需要N次比较。命中的查找在最坏情况下需要N次比较。
++ 向一个空表中插入N个不同的键需要N^2/2次比较
+
+
+
+
